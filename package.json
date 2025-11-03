@@ -17,10 +17,13 @@
     "@angular/platform-server": "~20.3.0",
     "@angular/router": "~20.3.0",
     "@angular/ssr": "~20.3.0",
+    "@genkit-ai/google-genai": "^1.22.0",
     "express": "^4.21.2",
     "firebase-admin": "^13.0.0",
     "firebase-functions": "^6.0.0",
+    "genkit": "^1.22.0",
     "rxjs": "~7.8.0",
+    "zod": "^4.1.12",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

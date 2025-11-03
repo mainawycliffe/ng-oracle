@@ -1,1 +1,69 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+// Material 3 theme inspired by angular.dev (Angular red)
+@include mat.core();
+
+// Define a Material 3 theme with Angular-inspired red colors
+$ng-lens-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$red-palette,
+    tertiary: mat.$blue-palette,
+  ),
+  typography: (
+    brand-family: 'Inter, system-ui, -apple-system, sans-serif',
+    plain-family: 'JetBrains Mono, Consolas, monospace',
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+html {
+  @include mat.all-component-themes($ng-lens-theme);
+  
+  // Override with Angular's signature red
+  --mat-sys-primary: #dd0031;
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: #ffdad6;
+  --mat-sys-on-primary-container: #410002;
+  
+  // Smooth scrolling
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  line-height: 1.6;
+}
+
+code, pre {
+  font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace;
+}
+
+// Reduced motion support for accessibility
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Focus visible styles for keyboard navigation
+:focus-visible {
+  outline: 2px solid var(--mat-sys-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

@@ -4,30 +4,32 @@
 @include mat.core();
 
 // Define a Material 3 theme with Angular-inspired red colors
-$ng-lens-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$red-palette,
-    tertiary: mat.$blue-palette,
-  ),
-  typography: (
-    brand-family: 'Inter, system-ui, -apple-system, sans-serif',
-    plain-family: 'JetBrains Mono, Consolas, monospace',
-  ),
-  density: (
-    scale: 0,
+$ng-lens-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$red-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: (
+      brand-family: 'Inter, system-ui, -apple-system, sans-serif',
+      plain-family: 'JetBrains Mono, Consolas, monospace',
+    ),
+    density: (
+      scale: 0,
+    ),
   )
-));
+);
 
 html {
   @include mat.all-component-themes($ng-lens-theme);
-  
+
   // Override with Angular's signature red
   --mat-sys-primary: #dd0031;
   --mat-sys-on-primary: #ffffff;
   --mat-sys-primary-container: #ffdad6;
   --mat-sys-on-primary-container: #410002;
-  
+
   // Smooth scrolling
   scroll-behavior: smooth;
 }
@@ -39,13 +41,15 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, sans-serif;
   background: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
   line-height: 1.6;
 }
 
-code, pre {
+code,
+pre {
   font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace;
 }
 
@@ -66,4 +70,115 @@ code, pre {
   outline: 2px solid var(--mat-sys-primary);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+// PrismJS Theme (Tomorrow Night)
+@import 'prismjs/themes/prism-tomorrow.css';
+@import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
+
+// Markdown Styles
+markdown {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+    color: var(--mat-sys-on-surface);
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  p {
+    margin-bottom: 1em;
+  }
+
+  ul,
+  ol {
+    margin-bottom: 1em;
+    padding-left: 1.5em;
+  }
+
+  li {
+    margin-bottom: 0.5em;
+  }
+
+  a {
+    color: var(--mat-sys-primary);
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  blockquote {
+    border-left: 4px solid var(--mat-sys-primary);
+    margin: 1em 0;
+    padding: 0.5em 1em;
+    background: var(--mat-sys-surface-variant);
+    color: var(--mat-sys-on-surface-variant);
+    border-radius: 0 8px 8px 0;
+  }
+
+  code {
+    background: var(--mat-sys-surface-variant);
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  pre {
+    margin: 1em 0;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+
+    code {
+      background: transparent;
+      padding: 0;
+      font-size: 0.9em;
+    }
+
+    &:hover .markdown-clipboard-button {
+      opacity: 1;
+    }
+  }
+
+  .markdown-clipboard-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: var(--mat-sys-surface);
+    color: var(--mat-sys-on-surface);
+    border: 1px solid var(--mat-sys-outline-variant);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-family: inherit;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s, background-color 0.2s;
+    z-index: 1;
+
+    &:hover {
+      background: var(--mat-sys-surface-variant);
+    }
+
+    &.copied {
+      background: var(--mat-sys-primary);
+      color: var(--mat-sys-on-primary);
+      border-color: var(--mat-sys-primary);
+    }
+  }
 }

@@ -1,11 +1,13 @@
+import { isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
+  PLATFORM_ID,
   signal,
 } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
 import { FooterComponent } from './components/footer.component';
 import { HeaderComponent } from './components/header.component';
 import { ModeInputComponent } from './components/mode-input.component';
@@ -101,10 +103,11 @@ interface AngularVersion {
 })
 export class App {
   private oracleService = inject(OracleService);
+  private platformId = inject(PLATFORM_ID);
 
   // State signals
   selectedMode = signal<Mode>('question');
-  selectedVersion = signal<string>('21');
+  selectedVersion = signal<string>(this.getInitialVersion());
   inputText = signal<string>('');
   isLoading = signal<boolean>(false);
   response = signal<string>('');
@@ -116,6 +119,22 @@ export class App {
     { value: '19', label: 'Angular 19' },
     { value: '18', label: 'Angular 18' },
   ];
+
+  constructor() {
+    effect(() => {
+      const version = this.selectedVersion();
+      if (isPlatformBrowser(this.platformId)) {
+        localStorage.setItem('ng-lens-version', version);
+      }
+    });
+  }
+
+  private getInitialVersion(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('ng-lens-version') || '21';
+    }
+    return '21';
+  }
 
   // Mode configuration
   modeConfig = computed(() => {
@@ -170,28 +189,33 @@ export class App {
     }
   });
 
-  async handleSubmit(): Promise<void> {
+  handleSubmit(): void {
     const input = this.inputText().trim();
     if (!input) return;
 
     this.isLoading.set(true);
     this.response.set('');
 
-    try {
-      const result = await firstValueFrom(
-        this.oracleService.ask({
-          query: input,
-          angularVersion: this.selectedVersion(),
-          mode: this.selectedMode(),
-        })
-      );
-      this.response.set(result.response);
-    } catch (error) {
-      console.error('Error calling Oracle:', error);
-      this.response.set('Sorry, something went wrong. Please try again.');
-    } finally {
-      this.isLoading.set(false);
-    }
+    this.oracleService
+      .stream({
+        query: input,
+        angularVersion: this.selectedVersion(),
+        mode: this.selectedMode(),
+      })
+      .subscribe({
+        next: (result) => {
+          this.isLoading.set(false);
+          this.response.set(result.response);
+        },
+        error: (error) => {
+          console.error('Error calling Oracle:', error);
+          this.response.set('Sorry, something went wrong. Please try again.');
+          this.isLoading.set(false);
+        },
+        complete: () => {
+          this.isLoading.set(false);
+        },
+      });
   }
 
   clearInput(): void {

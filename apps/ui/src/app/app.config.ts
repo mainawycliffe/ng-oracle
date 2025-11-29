@@ -1,3 +1,4 @@
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
@@ -9,6 +10,7 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
+import { provideMarkdown } from 'ngx-markdown';
 
 const firebaseConfig = {
   projectId: 'ng-lens',
@@ -26,5 +28,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideFunctions(() => getFunctions()),
+    provideHttpClient(withFetch()),
+    provideMarkdown(),
   ],
 };

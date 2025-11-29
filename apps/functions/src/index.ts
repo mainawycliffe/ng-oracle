@@ -100,8 +100,11 @@ const theOracleFlow = ai.defineFlow(
       response: z.string(),
       sources: z.array(z.string()).optional(),
     }),
+    streamSchema: z.object({
+      chunk: z.string(),
+    }),
   },
-  async (input) => {
+  async (input, { sendChunk }) => {
     const { query, angularVersion, mode } = input;
     const formattedVersion = `v${angularVersion}`;
 
@@ -127,7 +130,7 @@ const theOracleFlow = ai.defineFlow(
       context
     );
 
-    const { text } = await ai.generate({
+    const response = await ai.generateStream({
       system,
       prompt,
       config: {
@@ -135,8 +138,15 @@ const theOracleFlow = ai.defineFlow(
       },
     });
 
+    let fullText = '';
+    for await (const chunk of response.stream) {
+      const chunkText = chunk.text;
+      fullText += chunkText;
+      sendChunk({ chunk: chunkText });
+    }
+
     return {
-      response: text,
+      response: fullText,
       sources,
     };
   }

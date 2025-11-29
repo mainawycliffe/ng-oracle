@@ -48,6 +48,13 @@
     },
     "deploy": {
       "command": "firebase deploy --only functions"
+    },
+    "process-docs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx tools/process-docs.ts",
+        "cwd": "{workspaceRoot}"
+      }
     }
   },
   "tags": []

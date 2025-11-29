@@ -1,11 +1,18 @@
 import { googleAI } from '@genkit-ai/google-genai';
+import { initializeApp } from 'firebase-admin/app';
+import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { onCallGenkit } from 'firebase-functions/https';
 import { genkit, z } from 'genkit';
+
+initializeApp();
+const db = getFirestore();
 
 const ai = genkit({
   plugins: [googleAI()],
   model: googleAI.model('gemini-2.5-flash'),
 });
+
+const embedder = googleAI.embedder('text-embedding-004');
 
 const oracleInputSchema = z.object({
   query: z
@@ -14,6 +21,32 @@ const oracleInputSchema = z.object({
   angularVersion: z.string().describe('Angular version (18, 19, or 20)'),
   mode: z.enum(['question', 'error', 'review']).describe('Interaction mode'),
 });
+
+async function vectorSearch(query: string, version: string) {
+  const embedding = await ai.embed({
+    embedder,
+    content: query,
+  });
+
+  const coll = db.collection('angular-docs');
+  const snapshot = await coll
+    .where('version', '==', version)
+    .findNearest({
+      vectorField: 'embedding',
+      queryVector: FieldValue.vector(embedding.embedding),
+      limit: 5,
+      distanceMeasure: 'COSINE',
+    })
+    .get();
+
+  return snapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      content: data.content,
+      url: data.metadata.url,
+    };
+  });
+}
 
 // Helper to build mode-specific prompts
 function buildPrompt(
@@ -83,12 +116,9 @@ const theOracleFlow = ai.defineFlow(
   async (input) => {
     const { query, angularVersion, mode } = input;
 
-    // TODO: Implement vector search to get relevant context
-    // const relevantDocs = await vectorSearch(query, angularVersion);
-    // const context = relevantDocs.map(doc => doc.content).join('\n\n');
-    // const sources = relevantDocs.map(doc => doc.url);
-
-    const context = undefined; // Placeholder until vector search is implemented
+    const relevantDocs = await vectorSearch(query, angularVersion);
+    const context = relevantDocs.map((doc) => doc.content).join('\n\n');
+    const sources = relevantDocs.map((doc) => doc.url);
 
     const { system, prompt } = buildPrompt(
       mode,
@@ -107,7 +137,7 @@ const theOracleFlow = ai.defineFlow(
 
     return {
       response: text,
-      sources: [], // Will be populated by vector search
+      sources,
     };
   }
 );

@@ -47,6 +47,12 @@ html {
   --mat-sys-on-primary: #ffffff;
   --mat-sys-primary-container: #ffdad6;
   --mat-sys-on-primary-container: #410002;
+  
+  // Light theme overrides for better contrast
+  --mat-sys-background: #f6f8fa; // GitHub Light background
+  --mat-sys-surface: #ffffff;
+  --mat-sys-surface-container-low: #f6f8fa;
+  --mat-sys-outline-variant: #d0d7de;
 
   // Smooth scrolling
   scroll-behavior: smooth;
@@ -90,7 +96,7 @@ html {
 body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, sans-serif;
-  background: var(--mat-sys-surface);
+  background: var(--mat-sys-background);
   color: var(--mat-sys-on-surface);
   line-height: 1.6;
   font-size: var(--app-font-size);

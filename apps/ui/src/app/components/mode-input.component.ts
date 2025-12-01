@@ -173,10 +173,12 @@ import { Mode, ModeOption } from '../models/chat.types';
         border: 1px solid var(--mat-sys-outline-variant);
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 
         &:focus-within {
           border-color: var(--mat-sys-primary);
-          box-shadow: 0 0 0 2px var(--mat-sys-primary-container);
+          box-shadow: 0 0 0 2px var(--mat-sys-primary-container), 0 8px 24px rgba(0, 0, 0, 0.12);
+          transform: translateY(-1px);
         }
       }
 

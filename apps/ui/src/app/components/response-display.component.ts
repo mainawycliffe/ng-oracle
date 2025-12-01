@@ -34,126 +34,140 @@ interface Interaction {
   template: `
     <div class="notebook-stream">
       @for (group of interactions(); track $index) {
-      <div class="cell-group">
-        <!-- Input Cell (User) -->
-        <div class="cell input-cell">
-          <div class="cell-content">
-            <div class="input-source">
-              <div class="source-header">
-                <button
-                  mat-icon-button
-                  class="toggle-button"
-                  (click)="toggleSection($index)"
-                  [attr.aria-label]="
-                    isExpanded($index) ? 'Collapse section' : 'Expand section'
-                  "
-                >
-                  <mat-icon [class.rotated]="!isExpanded($index)"
-                    >expand_more</mat-icon
-                  >
-                </button>
-                <div class="source-code">{{ group.question.content }}</div>
-              </div>
-              @if (group.question.image) {
-              <div class="image-attachment">
-                <img [src]="group.question.image" alt="User uploaded image" />
-              </div>
-              }
-            </div>
-          </div>
-        </div>
-
-        <!-- Output Cell (Model) -->
-        <div class="cell output-cell" [class.expanded]="isExpanded($index)">
-          <div class="cell-wrapper">
-            <div class="cell-gutter">
-              <!-- Empty gutter for alignment -->
-            </div>
+        <div class="cell-group">
+          <!-- Input Cell (User) -->
+          <div class="cell input-cell">
             <div class="cell-content">
-              @if (group.answer) {
-              <div class="output-result" aria-live="polite">
-                @if (isString(group.answer.content)) {
-                @if(asString(group.answer.content)) {
-                <markdown
-                  [data]="asString(group.answer.content)"
-                  clipboard
-                ></markdown>
-                } @else if (isLoading() && $last) {
-                <div class="thinking-skeleton">
-                  <div class="skeleton-line short"></div>
-                  <div class="skeleton-line medium"></div>
-                  <div class="skeleton-line long"></div>
+              <div class="input-source">
+                <div class="source-header">
+                  <button
+                    mat-icon-button
+                    class="toggle-button"
+                    (click)="toggleSection($index)"
+                    [attr.aria-label]="
+                      isExpanded($index) ? 'Collapse section' : 'Expand section'
+                    "
+                  >
+                    <mat-icon [class.rotated]="!isExpanded($index)">
+                      expand_more
+                    </mat-icon>
+                  </button>
+                  <div class="source-code">{{ group.question.content }}</div>
                 </div>
-                } } @else {
-                <div class="blocks-container">
-                  @for (block of asBlocks(group.answer.content); track $index) {
-                  @if (block.type === 'text') {
-                  <div class="text-block">
-                    <markdown [data]="block.content"></markdown>
+                @if (group.question.image) {
+                  <div class="image-attachment">
+                    <img
+                      [src]="group.question.image"
+                      alt="User uploaded image"
+                    />
                   </div>
-                  } @else if (block.type === 'code') {
-                  <div class="code-block-wrapper">
-                    @if (block.filename) {
-                    <div class="code-header">
-                      <span class="filename">
-                        <mat-icon>description</mat-icon>
-                        {{ block.filename }}
-                      </span>
-                      <span class="language-badge">{{ block.language }}</span>
-                    </div>
-                    }
-                    <markdown [data]="getCodeBlock(block)" clipboard></markdown>
-                  </div>
-                  } }
-                </div>
                 }
               </div>
-              } @else if (isLoading() && $last) {
-              <div class="thinking-container">
-                <div class="thinking-skeleton">
-                  <div class="skeleton-line short"></div>
-                  <div class="skeleton-line medium"></div>
-                  <div class="skeleton-line long"></div>
-                </div>
-                <div class="thinking-actions">
-                  <span class="thinking-text">Generating response...</span>
-                  <button
-                    mat-button
-                    color="warn"
-                    (click)="cancelRequest.emit()"
-                    class="cancel-button"
-                  >
-                    Cancel
-                  </button>
-                </div>
+            </div>
+          </div>
+
+          <!-- Output Cell (Model) -->
+          <div class="cell output-cell" [class.expanded]="isExpanded($index)">
+            <div class="cell-wrapper">
+              <div class="cell-gutter">
+                <!-- Empty gutter for alignment -->
               </div>
-              }
+              <div class="cell-content">
+                @if (group.answer) {
+                  <div class="output-result" aria-live="polite">
+                    @if (isString(group.answer.content)) {
+                      @if (asString(group.answer.content)) {
+                        <markdown
+                          [data]="asString(group.answer.content)"
+                          clipboard
+                        ></markdown>
+                      } @else if (isLoading() && $last) {
+                        <div class="thinking-skeleton">
+                          <div class="skeleton-line short"></div>
+                          <div class="skeleton-line medium"></div>
+                          <div class="skeleton-line long"></div>
+                        </div>
+                      }
+                    } @else {
+                      <div class="blocks-container">
+                        @for (
+                          block of asBlocks(group.answer.content);
+                          track $index
+                        ) {
+                          @if (block.type === 'text') {
+                            <div class="text-block">
+                              <markdown [data]="block.content"></markdown>
+                            </div>
+                          } @else if (block.type === 'code') {
+                            <div class="code-block-wrapper">
+                              @if (block.filename) {
+                                <div class="code-header">
+                                  <span class="filename">
+                                    <mat-icon>description</mat-icon>
+                                    {{ block.filename }}
+                                  </span>
+                                  <span class="language-badge">{{
+                                    block.language
+                                  }}</span>
+                                </div>
+                              }
+                              <markdown
+                                [data]="getCodeBlock(block)"
+                                clipboard
+                              ></markdown>
+                            </div>
+                          }
+                        }
+                      </div>
+                    }
+                  </div>
+                } @else if (isLoading() && $last) {
+                  <div class="thinking-container">
+                    <div class="thinking-skeleton">
+                      <div class="skeleton-line short"></div>
+                      <div class="skeleton-line medium"></div>
+                      <div class="skeleton-line long"></div>
+                    </div>
+                    <div class="thinking-actions">
+                      <span class="thinking-text">Generating response...</span>
+                      <button
+                        mat-button
+                        color="warn"
+                        (click)="cancelRequest.emit()"
+                        class="cancel-button"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      } @if (interactions().length === 0) {
-      <div class="empty-notebook">
-        <div class="notebook-intro">
-          <h1>NgOracle</h1>
-          <p>AI-powered Angular Documentation Assistant</p>
-        </div>
+      }
+      @if (interactions().length === 0) {
+        <div class="empty-notebook">
+          <div class="notebook-intro">
+            <h1>NgOracle</h1>
+            <p>AI-powered Angular Documentation Assistant</p>
+          </div>
 
-        <div class="quick-starts">
-          <button mat-stroked-button class="start-chip">
-            <mat-icon>code</mat-icon>
-            Explain Code
-          </button>
-          <button mat-stroked-button class="start-chip">
-            <mat-icon>bug_report</mat-icon>
-            Debug Issue
-          </button>
-          <button mat-stroked-button class="start-chip">
-            <mat-icon>image</mat-icon>
-            Analyze UI
-          </button>
+          <div class="quick-starts">
+            <button mat-stroked-button class="start-chip">
+              <mat-icon>code</mat-icon>
+              Explain Code
+            </button>
+            <button mat-stroked-button class="start-chip">
+              <mat-icon>bug_report</mat-icon>
+              Debug Issue
+            </button>
+            <button mat-stroked-button class="start-chip">
+              <mat-icon>image</mat-icon>
+              Analyze UI
+            </button>
+          </div>
         </div>
-      </div>
       }
     </div>
   `,
@@ -260,9 +274,9 @@ interface Interaction {
         }
 
         .input-source {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-            'Noto Sans', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
-            'Segoe UI Emoji';
+          font-family:
+            -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans',
+            Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
           font-size: 14px;
           color: var(--mat-sys-on-surface);
           white-space: pre-wrap;
@@ -286,7 +300,8 @@ interface Interaction {
         grid-template-rows: 0fr;
         opacity: 0;
         margin-top: 0;
-        transition: grid-template-rows 300ms cubic-bezier(0.4, 0, 0.2, 1),
+        transition:
+          grid-template-rows 300ms cubic-bezier(0.4, 0, 0.2, 1),
           opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
           margin-top 300ms cubic-bezier(0.4, 0, 0.2, 1);
         overflow: hidden;
@@ -308,9 +323,9 @@ interface Interaction {
         }
 
         .output-result {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-            'Noto Sans', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
-            'Segoe UI Emoji';
+          font-family:
+            -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans',
+            Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
           font-size: 16px;
           line-height: 1.6;
           color: var(--mat-sys-on-surface);
@@ -344,8 +359,14 @@ interface Interaction {
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
-                font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo,
-                  Consolas, Liberation Mono, monospace;
+                font-family:
+                  ui-monospace,
+                  SFMono-Regular,
+                  SF Mono,
+                  Menlo,
+                  Consolas,
+                  Liberation Mono,
+                  monospace;
                 font-size: 13px;
                 color: var(--mat-sys-on-surface);
                 font-weight: 600;
@@ -371,10 +392,21 @@ interface Interaction {
               border-radius: 0 !important;
               background: transparent !important;
               padding: 16px !important;
-              font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo,
-                Consolas, Liberation Mono, monospace !important;
+              font-family:
+                ui-monospace,
+                SFMono-Regular,
+                SF Mono,
+                Menlo,
+                Consolas,
+                Liberation Mono,
+                monospace !important;
               font-size: 14px !important;
               line-height: 1.5 !important;
+            }
+
+            ::ng-deep code {
+              background: transparent !important;
+              text-shadow: none !important;
             }
           }
 
@@ -600,7 +632,7 @@ export class ResponseDisplayComponent {
           this.prevLength = 0;
         }
       },
-      { allowSignalWrites: true }
+      { allowSignalWrites: true },
     );
   }
 

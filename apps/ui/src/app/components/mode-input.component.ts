@@ -44,9 +44,12 @@ import { Mode, ModeOption } from '../models/chat.types';
               hideSingleSelectionIndicator="true"
             >
               @for (mode of modes(); track mode.value) {
-              <mat-button-toggle [value]="mode.value" [aria-label]="mode.label">
-                <mat-icon>{{ mode.icon }}</mat-icon>
-              </mat-button-toggle>
+                <mat-button-toggle
+                  [value]="mode.value"
+                  [aria-label]="mode.label"
+                >
+                  <mat-icon>{{ mode.icon }}</mat-icon>
+                </mat-button-toggle>
               }
             </mat-button-toggle-group>
             <span class="mode-label">{{ title() }}</span>
@@ -78,21 +81,21 @@ import { Mode, ModeOption } from '../models/chat.types';
         <!-- Input Area -->
         <div class="input-editor" [class.code-mode]="isCode()">
           @if (selectedImage()) {
-          <div class="image-preview-container">
-            <img
-              [src]="selectedImage()"
-              alt="Selected image"
-              class="image-preview"
-            />
-            <button
-              mat-icon-button
-              (click)="removeImage()"
-              class="remove-image-btn"
-              aria-label="Remove image"
-            >
-              <mat-icon>close</mat-icon>
-            </button>
-          </div>
+            <div class="image-preview-container">
+              <img
+                [src]="selectedImage()"
+                alt="Selected image"
+                class="image-preview"
+              />
+              <button
+                mat-icon-button
+                (click)="removeImage()"
+                class="remove-image-btn"
+                aria-label="Remove image"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
           }
 
           <textarea
@@ -158,7 +161,11 @@ import { Mode, ModeOption } from '../models/chat.types';
       .notebook-input-cell {
         display: flex;
         width: 100%;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-family:
+          'Inter',
+          system-ui,
+          -apple-system,
+          sans-serif;
         position: relative;
         margin-top: 1rem;
       }
@@ -185,7 +192,8 @@ import { Mode, ModeOption } from '../models/chat.types';
 
         &:focus-within {
           border-color: var(--mat-sys-primary);
-          box-shadow: 0 0 0 2px var(--mat-sys-primary-container),
+          box-shadow:
+            0 0 0 2px var(--mat-sys-primary-container),
             0 8px 24px rgba(0, 0, 0, 0.12);
           transform: translateY(-1px);
         }
@@ -294,15 +302,20 @@ import { Mode, ModeOption } from '../models/chat.types';
           outline: none;
           resize: none;
           background: transparent;
-          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          font-family:
+            'Inter',
+            system-ui,
+            -apple-system,
+            sans-serif;
           font-size: 15px;
           line-height: 1.6;
           color: var(--mat-sys-on-surface);
           caret-color: var(--mat-sys-primary);
 
           &.code-input {
-            font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular,
-              Consolas, monospace;
+            font-family:
+              'JetBrains Mono', ui-monospace, SFMono-Regular, Consolas,
+              monospace;
             font-size: 14px;
           }
 

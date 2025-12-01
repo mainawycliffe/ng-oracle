@@ -28,16 +28,16 @@ import { ChatStateService } from './services/chat-state.service';
   template: `
     <div class="app-container" (dragover)="onDragOver($event)">
       @if (isDragging()) {
-      <div
-        class="drag-overlay"
-        (dragleave)="onDragLeave($event)"
-        (drop)="onDrop($event)"
-      >
-        <div class="drag-content">
-          <mat-icon>cloud_upload</mat-icon>
-          <h2>Drop image to analyze</h2>
+        <div
+          class="drag-overlay"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+        >
+          <div class="drag-content">
+            <mat-icon>cloud_upload</mat-icon>
+            <h2>Drop image to analyze</h2>
+          </div>
         </div>
-      </div>
       }
 
       <app-header
@@ -96,7 +96,7 @@ import { ChatStateService } from './services/chat-state.service';
       </main>
 
       @if (chatState.messages().length === 0) {
-      <app-footer />
+        <app-footer />
       }
     </div>
   `,

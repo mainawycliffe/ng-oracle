@@ -51,9 +51,9 @@ interface AngularVersion {
               aria-label="Select Angular version"
             >
               @for (version of versions(); track version.value) {
-              <mat-option [value]="version.value">
-                {{ version.label }}
-              </mat-option>
+                <mat-option [value]="version.value">
+                  {{ version.label }}
+                </mat-option>
               }
             </mat-select>
           </mat-form-field>

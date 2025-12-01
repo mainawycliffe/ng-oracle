@@ -137,8 +137,7 @@ interface Interaction {
                 </div>
                 } }
               </div>
-              }
-              @if (group.answer.sources && group.answer.sources.length > 0) {
+              } @if (group.answer.sources && group.answer.sources.length > 0) {
               <div class="sources-section">
                 <div class="sources-title">Sources:</div>
                 <ul class="sources-list">

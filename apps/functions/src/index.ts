@@ -1,10 +1,15 @@
-import { defineFirestoreRetriever } from '@genkit-ai/firebase';
+import {
+  defineFirestoreRetriever,
+  enableFirebaseTelemetry,
+} from '@genkit-ai/firebase';
 import { googleAI } from '@genkit-ai/google-genai';
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { onCallGenkit } from 'firebase-functions/https';
 import { defineSecret } from 'firebase-functions/params';
 import { genkit, z } from 'genkit';
+
+enableFirebaseTelemetry();
 
 initializeApp();
 const db = getFirestore();
@@ -95,6 +100,10 @@ const oracleResponseSchema = z.object({
       }),
     ])
   ),
+  sources: z
+    .array(z.string())
+    .optional()
+    .describe('List of URLs used as sources'),
 });
 
 const oracleOutputSchema = z.object({
@@ -120,9 +129,10 @@ CRITICAL INSTRUCTIONS FOR ACCURACY:
 4. DO NOT HALLUCINATE features or APIs. If a user asks about a feature (e.g., "signal forms") and it is not in the retrieved docs, do not invent it.
 5. Verify that any code or advice you provide is supported by the retrieved documentation.
 
-IMPORTANT: When you have gathered enough information, you must respond with a JSON object containing a 'blocks' array.
+IMPORTANT: When you have gathered enough information, you must respond with a JSON object containing a 'blocks' array and a 'sources' array.
 - Use 'text' blocks for explanations.
 - Use 'code' blocks for code snippets, specifying the language and optional filename.
+- Use 'sources' array to list the URLs of the documentation pages you used to answer the question.
 `;
 
   const modeInstructions = {
@@ -193,72 +203,19 @@ const theOracleFlow = ai.defineFlow(
       content: userContent,
     });
 
-    let finalResponse;
-    const sources = new Set<string>();
-
-    // Agent Loop (Max 5 turns)
-    for (let i = 0; i < 5; i++) {
-      const response = await ai.generate({
-        system,
-        messages,
-        tools: [searchAngularDocs],
-        // We only enforce schema if no tools are called, but Genkit handles this if we pass schema.
-        // However, to allow tool calls, we might need to be careful.
-        // Gemini usually handles "tool use OR json output" well.
-        output: { schema: oracleResponseSchema },
-        config: {
-          temperature: 0.3,
-        },
-      });
-
-      const toolRequests = response.toolRequests;
-
-      if (toolRequests && toolRequests.length > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        messages.push(response.message as any);
-
-        for (const req of toolRequests) {
-          if (req.toolRequest.name === searchAngularDocs.name) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const output = await searchAngularDocs.run(req.toolRequest.input as any);
-
-            // Collect sources
-            output.result.results.forEach((r) => {
-              if (r.url) sources.add(r.url);
-            });
-
-            messages.push({
-              role: 'tool',
-              content: [
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                { toolResponse: { name: req.toolRequest.name, ref: req.toolRequest.ref, output } } as any,
-              ],
-            });
-          }
-        }
-      } else {
-        finalResponse = response.output;
-        break;
-      }
-    }
-
-    if (!finalResponse) {
-      // Fallback if loop exhausted or something went wrong
-      // We can try to force a response or just return an error block
-      finalResponse = {
-        blocks: [
-          {
-            type: 'text',
-            content:
-              "I'm sorry, I couldn't find the answer after multiple attempts. Please try rephrasing your question.",
-          },
-        ],
-      };
-    }
+    const response = await ai.generate({
+      system,
+      messages,
+      tools: [searchAngularDocs],
+      output: { schema: oracleResponseSchema },
+      config: {
+        temperature: 0.3,
+      },
+    });
 
     return {
-      response: finalResponse,
-      sources: Array.from(sources),
+      response: response.output,
+      sources: response.output.sources || [],
     };
   }
 );

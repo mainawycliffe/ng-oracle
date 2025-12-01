@@ -15,6 +15,7 @@ export interface ChatMessage {
   role: 'user' | 'model';
   content: string | ChatBlock[];
   image?: string;
+  sources?: string[];
 }
 
 export type ChatBlock = TextBlock | CodeBlock;

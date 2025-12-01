@@ -278,15 +278,11 @@ export class ChatStateService {
     this.inputText.set('');
     this.selectedImage.set(null);
 
-    // Modify query if learn mode is active
-    const effectiveQuery = learnMode
-      ? `${input}\n\nPlease provide a comprehensive learning guide and tutorial for this topic. Explain the concepts, provide examples, and guide me through it step-by-step.`
-      : input;
-
     const payload: OracleInput = {
-      query: effectiveQuery,
+      query: input,
       angularVersion: this.selectedVersion(),
       mode: this.selectedMode(),
+      learningMode: learnMode,
       history: history,
     };
 
@@ -302,7 +298,6 @@ export class ChatStateService {
           newMsgs[lastIdx] = {
             ...newMsgs[lastIdx],
             content: result.response.blocks,
-            sources: result.sources,
           };
           return newMsgs;
         });

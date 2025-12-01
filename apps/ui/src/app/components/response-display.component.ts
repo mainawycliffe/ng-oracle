@@ -106,23 +106,6 @@ interface Interaction {
                   </div>
                   } }
                 </div>
-                } @if (group.answer.sources && group.answer.sources.length > 0)
-                {
-                <div class="sources-section">
-                  <div class="sources-title">Sources:</div>
-                  <ul class="sources-list">
-                    @for (source of group.answer.sources; track $index) {
-                    <li>
-                      <a
-                        [href]="source"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        >{{ source }}</a
-                      >
-                    </li>
-                    }
-                  </ul>
-                </div>
                 }
               </div>
               } @else if (isLoading() && $last) {

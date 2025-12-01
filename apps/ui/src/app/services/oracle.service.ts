@@ -8,12 +8,12 @@ export interface OracleInput {
   angularVersion: string;
   mode: 'question' | 'error' | 'review';
   image?: string;
+  learningMode?: boolean;
   history?: { role: 'user' | 'model'; content: string | ChatBlock[] }[];
 }
 
 export interface OracleResponse {
   response: { blocks: ChatBlock[] };
-  sources?: string[];
 }
 
 @Injectable({

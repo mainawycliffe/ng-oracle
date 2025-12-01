@@ -11,6 +11,7 @@ import {
   computed,
   effect,
   input,
+  output,
   signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -137,12 +138,42 @@ interface Interaction {
                 } }
               </div>
               }
+              @if (group.answer.sources && group.answer.sources.length > 0) {
+              <div class="sources-section">
+                <div class="sources-title">Sources:</div>
+                <ul class="sources-list">
+                  @for (source of group.answer.sources; track $index) {
+                  <li>
+                    <a
+                      [href]="source"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >{{ source }}</a
+                    >
+                  </li>
+                  }
+                </ul>
+              </div>
+              }
             </div>
             } @else if (isLoading() && $last) {
-            <div class="thinking-skeleton">
-              <div class="skeleton-line short"></div>
-              <div class="skeleton-line medium"></div>
-              <div class="skeleton-line long"></div>
+            <div class="thinking-container">
+              <div class="thinking-skeleton">
+                <div class="skeleton-line short"></div>
+                <div class="skeleton-line medium"></div>
+                <div class="skeleton-line long"></div>
+              </div>
+              <div class="thinking-actions">
+                <span class="thinking-text">Generating response...</span>
+                <button
+                  mat-button
+                  color="warn"
+                  (click)="cancelRequest.emit()"
+                  class="cancel-button"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
             }
           </div>
@@ -370,6 +401,40 @@ interface Interaction {
               line-height: 1.5 !important;
             }
           }
+
+          .sources-section {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--mat-sys-outline-variant);
+
+            .sources-title {
+              font-size: 0.875rem;
+              font-weight: 600;
+              color: var(--mat-sys-on-surface-variant);
+              margin-bottom: 0.5rem;
+            }
+
+            .sources-list {
+              list-style: none;
+              padding: 0;
+              margin: 0;
+              display: flex;
+              flex-direction: column;
+              gap: 0.25rem;
+
+              li {
+                font-size: 0.875rem;
+
+                a {
+                  color: var(--mat-sys-primary);
+                  text-decoration: none;
+                  &:hover {
+                    text-decoration: underline;
+                  }
+                }
+              }
+            }
+          }
         }
       }
 
@@ -385,12 +450,13 @@ interface Interaction {
           border-radius: 6px;
           background: linear-gradient(
             90deg,
-            var(--mat-sys-surface-container-high) 25%,
-            var(--mat-sys-surface-container-highest) 50%,
-            var(--mat-sys-surface-container-high) 75%
+            var(--mat-sys-surface-container-low) 25%,
+            var(--mat-sys-outline-variant) 50%,
+            var(--mat-sys-surface-container-low) 75%
           );
           background-size: 200% 100%;
           animation: shimmer 1.5s infinite linear;
+          opacity: 0.7;
 
           &.short {
             width: 60%;
@@ -401,6 +467,31 @@ interface Interaction {
           &.long {
             width: 100%;
           }
+        }
+      }
+
+      .thinking-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .thinking-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 0.5rem;
+
+        .thinking-text {
+          font-size: 0.875rem;
+          color: var(--mat-sys-secondary);
+          font-style: italic;
+        }
+
+        .cancel-button {
+          height: 32px;
+          line-height: 32px;
+          font-size: 0.875rem;
         }
       }
 
@@ -470,6 +561,7 @@ interface Interaction {
 export class ResponseDisplayComponent {
   messages = input.required<ChatMessage[]>();
   isLoading = input.required<boolean>();
+  cancelRequest = output<void>();
 
   // State for expanded sections
   expandedStates = signal<boolean[]>([]);

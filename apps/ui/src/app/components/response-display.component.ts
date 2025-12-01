@@ -13,6 +13,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MarkdownComponent } from 'ngx-markdown';
+import { EXAMPLE_PROMPTS } from '../config/examples.config';
 import { ChatBlock, ChatMessage, CodeBlock } from '../models/chat.types';
 
 interface Interaction {
@@ -153,19 +154,26 @@ interface Interaction {
             <p>AI-powered Angular Documentation Assistant</p>
           </div>
 
-          <div class="quick-starts">
-            <button mat-stroked-button class="start-chip">
-              <mat-icon>code</mat-icon>
-              Explain Code
-            </button>
-            <button mat-stroked-button class="start-chip">
-              <mat-icon>bug_report</mat-icon>
-              Debug Issue
-            </button>
-            <button mat-stroked-button class="start-chip">
-              <mat-icon>image</mat-icon>
-              Analyze UI
-            </button>
+          <div class="examples-grid">
+            @for (category of examplePrompts; track category.category) {
+              <div class="example-category">
+                <div class="category-header">
+                  <mat-icon>{{ category.icon }}</mat-icon>
+                  <h3>{{ category.category }}</h3>
+                </div>
+                <div class="prompts-list">
+                  @for (prompt of category.prompts; track prompt) {
+                    <button
+                      mat-button
+                      class="prompt-button"
+                      (click)="promptSelected.emit(prompt)"
+                    >
+                      {{ prompt }}
+                    </button>
+                  }
+                </div>
+              </div>
+            }
           </div>
         </div>
       }
@@ -537,28 +545,85 @@ interface Interaction {
           }
         }
 
-        .quick-starts {
-          display: flex;
-          gap: 1rem;
-          flex-wrap: wrap;
-          justify-content: center;
+        .examples-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 1.5rem;
+          width: 100%;
+          max-width: 1200px;
+          padding: 0 1rem;
+        }
 
-          .start-chip {
-            border-radius: 100px;
-            padding: 0 1.5rem;
-            height: 48px;
-            border-color: var(--mat-sys-outline);
+        .example-category {
+          background: var(--mat-sys-surface-container-low);
+          border-radius: 16px;
+          padding: 1.5rem;
+          text-align: left;
+          border: 1px solid var(--mat-sys-outline-variant);
+          transition:
+            transform 0.2s,
+            box-shadow 0.2s;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            background: var(--mat-sys-surface-container);
+          }
+
+          .category-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
             color: var(--mat-sys-primary);
-            font-weight: 500;
 
             mat-icon {
-              margin-right: 8px;
+              font-size: 24px;
+              width: 24px;
+              height: 24px;
             }
 
-            &:hover {
-              background-color: var(--mat-sys-secondary-container);
-              border-color: transparent;
-              color: var(--mat-sys-on-secondary-container);
+            h3 {
+              margin: 0;
+              font-size: 1.1rem;
+              font-weight: 600;
+              color: var(--mat-sys-on-surface);
+            }
+          }
+
+          .prompts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            .prompt-button {
+              width: 100%;
+              text-align: left;
+              justify-content: flex-start;
+              white-space: normal;
+              height: auto;
+              padding: 0.5rem 0.75rem;
+              line-height: 1.4;
+              font-size: 0.9rem;
+              color: var(--mat-sys-on-surface-variant);
+              border-radius: 8px;
+              word-break: break-word;
+              overflow-wrap: anywhere;
+
+              &:hover {
+                background-color: var(--mat-sys-surface-container-high);
+                color: var(--mat-sys-on-surface);
+              }
+
+              ::ng-deep .mat-mdc-button-touch-target {
+                height: 100%;
+              }
+
+              ::ng-deep .mdc-button__label {
+                white-space: normal;
+                text-align: left;
+                width: 100%;
+              }
             }
           }
         }
@@ -570,6 +635,9 @@ export class ResponseDisplayComponent {
   messages = input.required<ChatMessage[]>();
   isLoading = input.required<boolean>();
   cancelRequest = output<void>();
+  promptSelected = output<string>();
+
+  protected readonly examplePrompts = EXAMPLE_PROMPTS;
 
   // State for expanded sections
   expandedStates = signal<boolean[]>([]);

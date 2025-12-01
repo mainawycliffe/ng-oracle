@@ -47,7 +47,7 @@ html {
   --mat-sys-on-primary: #ffffff;
   --mat-sys-primary-container: #ffdad6;
   --mat-sys-on-primary-container: #410002;
-  
+
   // Light theme overrides for better contrast
   --mat-sys-background: #f6f8fa; // GitHub Light background
   --mat-sys-surface: #ffffff;
@@ -60,7 +60,7 @@ html {
 
 @mixin dark-theme-styles {
   @include mat.all-component-colors($ng-lens-dark-theme);
-  
+
   // Explicitly set system variables for dark mode to ensure background changes
   --mat-sys-background: #0d1117; // GitHub Dark Dimmed/Dark
   --mat-sys-on-background: #c9d1d9;
@@ -73,13 +73,13 @@ html {
   --mat-sys-on-surface-variant: #8b949e;
   --mat-sys-outline: #30363d;
   --mat-sys-outline-variant: #30363d;
-  
+
   // Dark mode overrides for Angular red
   --mat-sys-primary: #ffb4ab;
   --mat-sys-on-primary: #690012;
   --mat-sys-primary-container: #93001e;
   --mat-sys-on-primary-container: #ffdad6;
-  
+
   color-scheme: dark;
 }
 
@@ -127,35 +127,36 @@ pre {
 }
 
 /* GitHub Light Theme for PrismJS */
-code[class*="language-"],
-pre[class*="language-"] {
-	color: #24292e;
-	font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-	font-size: 14px;
-	text-align: left;
-	white-space: pre;
-	word-spacing: normal;
-	word-break: normal;
-	word-wrap: normal;
-	line-height: 1.5;
-	tab-size: 4;
-	hyphens: none;
+code[class*='language-'],
+pre[class*='language-'] {
+  color: #24292e;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
+    Liberation Mono, monospace;
+  font-size: 14px;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  tab-size: 4;
+  hyphens: none;
 }
 
 /* Code blocks */
-pre[class*="language-"] {
-	padding: 16px;
-	margin: .5em 0;
-	overflow: auto;
+pre[class*='language-'] {
+  padding: 16px;
+  margin: 0.5em 0;
+  overflow: auto;
   background-color: #f6f8fa;
   border-radius: 6px;
 }
 
 /* Inline code */
-:not(pre) > code[class*="language-"] {
-	padding: .1em .3em;
-	border-radius: .3em;
-	white-space: normal;
+:not(pre) > code[class*='language-'] {
+  padding: 0.1em 0.3em;
+  border-radius: 0.3em;
+  white-space: normal;
   background-color: #f6f8fa;
 }
 
@@ -163,15 +164,15 @@ pre[class*="language-"] {
 .token.prolog,
 .token.doctype,
 .token.cdata {
-	color: #6a737d;
+  color: #6a737d;
 }
 
 .token.punctuation {
-	color: #24292e;
+  color: #24292e;
 }
 
 .token.namespace {
-	opacity: .7;
+  opacity: 0.7;
 }
 
 .token.property,
@@ -181,7 +182,7 @@ pre[class*="language-"] {
 .token.constant,
 .token.symbol,
 .token.deleted {
-	color: #22863a;
+  color: #22863a;
 }
 
 .token.selector,
@@ -191,48 +192,48 @@ pre[class*="language-"] {
 .token.builtin,
 .token.url,
 .token.inserted {
-	color: #032f62;
+  color: #032f62;
 }
 
 .token.entity {
-	color: #6f42c1;
-	cursor: help;
+  color: #6f42c1;
+  cursor: help;
 }
 
 .token.atrule,
 .token.attr-value,
 .token.keyword {
-	color: #d73a49;
+  color: #d73a49;
 }
 
 .token.function,
 .token.class-name {
-	color: #6f42c1;
+  color: #6f42c1;
 }
 
 .token.regex,
 .token.important,
 .token.variable {
-	color: #e36209;
+  color: #e36209;
 }
 
 .token.important,
 .token.bold {
-	font-weight: bold;
+  font-weight: bold;
 }
 .token.italic {
-	font-style: italic;
+  font-style: italic;
 }
 
 /* GitHub Dark Theme (Media Query & Manual Toggle) */
 @mixin github-dark-theme {
-  code[class*="language-"],
-  pre[class*="language-"] {
+  code[class*='language-'],
+  pre[class*='language-'] {
     color: #c9d1d9;
   }
 
-  pre[class*="language-"],
-  :not(pre) > code[class*="language-"] {
+  pre[class*='language-'],
+  :not(pre) > code[class*='language-'] {
     background-color: #0d1117;
   }
 
@@ -287,23 +288,23 @@ pre[class*="language-"] {
   .token.variable {
     color: #ffa657;
   }
-  
+
   /* Markdown Dark Overrides */
   markdown {
     pre {
       background-color: #0d1117;
       border-color: #30363d;
     }
-    
+
     code {
       background: rgba(110, 118, 129, 0.4);
       color: #c9d1d9;
     }
-    
+
     .markdown-clipboard-button {
       color: #8b949e;
       border-color: #30363d;
-      
+
       &:hover {
         background-color: rgba(177, 186, 196, 0.12);
         border-color: #8b949e;
@@ -316,19 +317,20 @@ pre[class*="language-"] {
     .code-block-wrapper {
       background-color: #0d1117 !important;
       border-color: #30363d !important;
-      
+
       .code-header {
         background-color: #161b22 !important;
         border-bottom-color: #30363d !important;
-        
+
         .filename {
           color: #c9d1d9 !important;
         }
       }
     }
-    
+
     /* Ensure inline code has enough contrast */
-    .input-source, .output-result {
+    .input-source,
+    .output-result {
       code {
         background-color: rgba(110, 118, 129, 0.4) !important;
         color: #c9d1d9 !important;
@@ -338,13 +340,13 @@ pre[class*="language-"] {
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme='light']) {
     @include dark-theme-styles;
     @include github-dark-theme;
   }
 }
 
-:root[data-theme="dark"] {
+:root[data-theme='dark'] {
   @include dark-theme-styles;
   @include github-dark-theme;
 }
@@ -364,10 +366,22 @@ markdown {
     color: var(--mat-sys-on-surface);
   }
 
-  h1 { font-size: 2em; border-bottom: 1px solid var(--mat-sys-outline-variant); padding-bottom: 0.3em; }
-  h2 { font-size: 1.5em; border-bottom: 1px solid var(--mat-sys-outline-variant); padding-bottom: 0.3em; }
-  h3 { font-size: 1.25em; }
-  h4 { font-size: 1em; }
+  h1 {
+    font-size: 2em;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+    padding-bottom: 0.3em;
+  }
+  h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+    padding-bottom: 0.3em;
+  }
+  h3 {
+    font-size: 1.25em;
+  }
+  h4 {
+    font-size: 1em;
+  }
 
   p {
     margin-bottom: 8px;
@@ -403,7 +417,8 @@ markdown {
     padding: 0.2em 0.4em;
     border-radius: 6px;
     font-size: 85%;
-    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
+      Liberation Mono, monospace;
   }
 
   pre {
@@ -436,7 +451,8 @@ markdown {
     border: 1px solid var(--mat-sys-outline-variant);
     border-radius: 6px;
     font-size: 12px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial,
+      sans-serif;
     font-weight: 500;
     line-height: 20px;
     cursor: pointer;
@@ -453,14 +469,14 @@ markdown {
     }
 
     &:hover {
-      background-color: rgba(0,0,0,0.05);
+      background-color: rgba(0, 0, 0, 0.05);
       border-color: var(--mat-sys-outline);
     }
 
     &.copied {
       border-color: var(--mat-sys-primary);
       color: var(--mat-sys-primary);
-      
+
       &::after {
         content: 'Copied!';
       }

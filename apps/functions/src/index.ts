@@ -157,7 +157,14 @@ const theOracleFlow = ai.defineFlow(
 
     const messages = (history || []).map((m) => ({
       role: m.role,
-      content: [{ text: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }],
+      content: [
+        {
+          text:
+            typeof m.content === 'string'
+              ? m.content
+              : JSON.stringify(m.content),
+        },
+      ],
     }));
 
     const userContent = [{ text: prompt }];

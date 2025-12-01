@@ -87,6 +87,8 @@ import { ChatStateService } from './services/chat-state.service';
               (submitAction)="sendMessage()"
               (clear)="chatState.clearInput()"
               (learnModeChange)="chatState.toggleLearnMode()"
+              (newSession)="chatState.startNewSession()"
+              (navigateHistory)="chatState.navigateHistory($event)"
             />
           </div>
         </div>

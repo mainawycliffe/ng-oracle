@@ -29,12 +29,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
           </a>
           <span class="separator">•</span>
           <a 
-            href="https://mainawycliffe.dev" 
+            href="https://github.com/mainawycliffe/ng-lens/issues" 
             target="_blank" 
             rel="noopener noreferrer"
             class="footer-link"
-            aria-label="Visit developer portfolio">
-            Portfolio
+            aria-label="Report a bug on GitHub">
+            Report Bug
           </a>
         </div>
       </div>

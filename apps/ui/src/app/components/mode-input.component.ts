@@ -53,6 +53,17 @@ import { Mode, ModeOption } from '../models/chat.types';
           </div>
 
           <div class="toolbar-actions">
+            <button
+              mat-icon-button
+              (click)="newSession.emit()"
+              aria-label="Start new session"
+              title="New Session"
+            >
+              <mat-icon>add_comment</mat-icon>
+            </button>
+
+            <div class="divider"></div>
+
             <mat-slide-toggle
               [checked]="isLearnMode()"
               (change)="learnModeChange.emit($event.checked)"
@@ -61,15 +72,6 @@ import { Mode, ModeOption } from '../models/chat.types';
             >
               <span class="toggle-label">Learning Mode</span>
             </mat-slide-toggle>
-
-            <button
-              mat-icon-button
-              (click)="clear.emit()"
-              aria-label="Clear input"
-              title="Clear"
-            >
-              <mat-icon>delete_outline</mat-icon>
-            </button>
           </div>
         </div>
 
@@ -103,6 +105,7 @@ import { Mode, ModeOption } from '../models/chat.types';
             [cdkAutosizeMaxRows]="maxRows()"
             [class.code-input]="isCode()"
             [attr.aria-label]="ariaLabel()"
+            (keydown)="onKeyDown($event)"
             (keydown.control.enter)="submitAction.emit()"
             (keydown.meta.enter)="submitAction.emit()"
           ></textarea>
@@ -129,6 +132,11 @@ import { Mode, ModeOption } from '../models/chat.types';
           </button>
 
           <div class="spacer"></div>
+
+          <div class="shortcut-hint">
+            <span class="key">Ctrl</span> + <span class="key">Enter</span> to
+            run
+          </div>
 
           <button
             mat-flat-button
@@ -177,7 +185,8 @@ import { Mode, ModeOption } from '../models/chat.types';
 
         &:focus-within {
           border-color: var(--mat-sys-primary);
-          box-shadow: 0 0 0 2px var(--mat-sys-primary-container), 0 8px 24px rgba(0, 0, 0, 0.12);
+          box-shadow: 0 0 0 2px var(--mat-sys-primary-container),
+            0 8px 24px rgba(0, 0, 0, 0.12);
           transform: translateY(-1px);
         }
       }
@@ -254,6 +263,13 @@ import { Mode, ModeOption } from '../models/chat.types';
         align-items: center;
         gap: 0.5rem;
 
+        .divider {
+          width: 1px;
+          height: 20px;
+          background-color: var(--mat-sys-outline-variant);
+          margin: 0 0.5rem;
+        }
+
         .toggle-label {
           font-size: 0.8rem;
           margin-right: 0.5rem;
@@ -285,7 +301,8 @@ import { Mode, ModeOption } from '../models/chat.types';
           caret-color: var(--mat-sys-primary);
 
           &.code-input {
-            font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular,
+              Consolas, monospace;
             font-size: 14px;
           }
 
@@ -318,7 +335,7 @@ import { Mode, ModeOption } from '../models/chat.types';
           width: 24px;
           height: 24px;
           line-height: 24px;
-          
+
           mat-icon {
             font-size: 16px;
             width: 16px;
@@ -343,6 +360,26 @@ import { Mode, ModeOption } from '../models/chat.types';
           flex: 1;
         }
 
+        .shortcut-hint {
+          margin-right: 1rem;
+          font-size: 0.75rem;
+          color: var(--mat-sys-secondary);
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          user-select: none;
+
+          .key {
+            background: var(--mat-sys-surface-container-high);
+            border: 1px solid var(--mat-sys-outline-variant);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 500;
+          }
+        }
+
         .run-btn {
           border-radius: 6px;
           padding: 0 1.5rem;
@@ -361,7 +398,7 @@ import { Mode, ModeOption } from '../models/chat.types';
 
         .action-icon-btn {
           color: var(--mat-sys-on-surface-variant);
-          
+
           &:hover {
             color: var(--mat-sys-primary);
             background: var(--mat-sys-surface-container-high);
@@ -409,6 +446,8 @@ export class ModeInputComponent {
   inputChange = output<string>();
   submitAction = output<void>();
   clear = output<void>();
+  newSession = output<void>();
+  navigateHistory = output<'prev' | 'next'>();
 
   // Internal state
   isExpanded = signal<boolean>(false);
@@ -420,6 +459,24 @@ export class ModeInputComponent {
   onInputChange(event: Event): void {
     const target = event.target as HTMLTextAreaElement;
     this.inputChange.emit(target.value);
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    const textarea = event.target as HTMLTextAreaElement;
+
+    if (event.key === 'ArrowUp') {
+      // Only navigate if cursor is at start
+      if (textarea.selectionStart === 0 && textarea.selectionEnd === 0) {
+        event.preventDefault();
+        this.navigateHistory.emit('prev');
+      }
+    } else if (event.key === 'ArrowDown') {
+      // Only navigate if cursor is at end
+      if (textarea.selectionStart === textarea.value.length) {
+        event.preventDefault();
+        this.navigateHistory.emit('next');
+      }
+    }
   }
 
   onFileSelected(event: Event) {

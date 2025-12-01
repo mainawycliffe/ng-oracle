@@ -24,8 +24,12 @@ export class ChatStateService {
   readonly selectedImage = signal<string | null>(null);
   readonly isLoading = signal<boolean>(false);
   readonly messages = signal<ChatMessage[]>([]);
-  readonly isLearnMode = signal<boolean>(false);
-  
+  readonly isLearnMode = signal<boolean>(this.getInitialLearnMode());
+
+  // Input History
+  private inputHistory = signal<string[]>(this.getInitialHistory());
+  private historyIndex = signal<number>(-1);
+
   // Settings
   readonly fontSize = signal<number>(this.getInitialFontSize());
   readonly theme = signal<'light' | 'dark' | 'system'>(this.getInitialTheme());
@@ -103,7 +107,10 @@ export class ChatStateService {
       const size = this.fontSize();
       if (isPlatformBrowser(this.platformId)) {
         localStorage.setItem('ng-lens-font-size', size.toString());
-        document.documentElement.style.setProperty('--app-font-size', `${size}px`);
+        document.documentElement.style.setProperty(
+          '--app-font-size',
+          `${size}px`
+        );
       }
     });
 
@@ -116,6 +123,20 @@ export class ChatStateService {
         } else {
           document.documentElement.setAttribute('data-theme', theme);
         }
+      }
+    });
+
+    effect(() => {
+      const learnMode = this.isLearnMode();
+      if (isPlatformBrowser(this.platformId)) {
+        localStorage.setItem('ng-lens-learn-mode', String(learnMode));
+      }
+    });
+
+    effect(() => {
+      const history = this.inputHistory();
+      if (isPlatformBrowser(this.platformId)) {
+        localStorage.setItem('ng-lens-history', JSON.stringify(history));
       }
     });
   }
@@ -155,6 +176,51 @@ export class ChatStateService {
   clearInput() {
     this.inputText.set('');
     this.selectedImage.set(null);
+    this.historyIndex.set(-1);
+  }
+
+  startNewSession() {
+    this.messages.set([]);
+    this.clearInput();
+    this.isLoading.set(false);
+  }
+
+  navigateHistory(direction: 'prev' | 'next') {
+    const history = this.inputHistory();
+    if (history.length === 0) return;
+
+    let newIndex = this.historyIndex();
+
+    if (direction === 'prev') {
+      if (newIndex === -1) {
+        newIndex = history.length - 1;
+      } else {
+        newIndex = Math.max(0, newIndex - 1);
+      }
+    } else {
+      if (newIndex === -1) return;
+      newIndex = Math.min(history.length - 1, newIndex + 1);
+    }
+
+    this.historyIndex.set(newIndex);
+
+    // If we are at the end and go next, clear input (or if we were at -1)
+    // Actually, standard behavior:
+    // Up -> older messages. Down -> newer messages.
+    // If we are at the latest message and press down, we might want to go back to empty or what was typed.
+    // For simplicity:
+    // If direction is next and we are at the last item, we can go to -1 (empty/current draft).
+
+    if (
+      direction === 'next' &&
+      this.historyIndex() === history.length - 1 &&
+      newIndex === history.length - 1
+    ) {
+      // We are already at the end, maybe we want to clear?
+      // Let's stick to simple cycling for now or just clamping.
+    }
+
+    this.inputText.set(history[newIndex]);
   }
 
   sendMessage() {
@@ -162,6 +228,12 @@ export class ChatStateService {
     const image = this.selectedImage();
 
     if (!input && !image) return;
+
+    // Add to history if it's a text input
+    if (input) {
+      this.inputHistory.update((h) => [...h, input]);
+      this.historyIndex.set(-1);
+    }
 
     const history = this.messages();
     const learnMode = this.isLearnMode();
@@ -193,37 +265,35 @@ export class ChatStateService {
       payload.image = image;
     }
 
-    this.oracleService
-      .generate(payload)
-      .subscribe({
-        next: (result) => {
-          this.messages.update((msgs) => {
-            const newMsgs = [...msgs];
-            const lastIdx = newMsgs.length - 1;
-            newMsgs[lastIdx] = {
-              ...newMsgs[lastIdx],
-              content: result.response.blocks,
-            };
-            return newMsgs;
-          });
-        },
-        error: (error) => {
-          console.error('Error calling Oracle:', error);
-          this.messages.update((msgs) => {
-            const newMsgs = [...msgs];
-            const lastIdx = newMsgs.length - 1;
-            newMsgs[lastIdx] = {
-              ...newMsgs[lastIdx],
-              content: 'Sorry, something went wrong. Please try again.',
-            };
-            return newMsgs;
-          });
-          this.isLoading.set(false);
-        },
-        complete: () => {
-          this.isLoading.set(false);
-        },
-      });
+    this.oracleService.generate(payload).subscribe({
+      next: (result) => {
+        this.messages.update((msgs) => {
+          const newMsgs = [...msgs];
+          const lastIdx = newMsgs.length - 1;
+          newMsgs[lastIdx] = {
+            ...newMsgs[lastIdx],
+            content: result.response.blocks,
+          };
+          return newMsgs;
+        });
+      },
+      error: (error) => {
+        console.error('Error calling Oracle:', error);
+        this.messages.update((msgs) => {
+          const newMsgs = [...msgs];
+          const lastIdx = newMsgs.length - 1;
+          newMsgs[lastIdx] = {
+            ...newMsgs[lastIdx],
+            content: 'Sorry, something went wrong. Please try again.',
+          };
+          return newMsgs;
+        });
+        this.isLoading.set(false);
+      },
+      complete: () => {
+        this.isLoading.set(false);
+      },
+    });
   }
 
   // Helpers
@@ -260,5 +330,27 @@ export class ChatStateService {
       }
     }
     return 'system';
+  }
+
+  private getInitialLearnMode(): boolean {
+    if (isPlatformBrowser(this.platformId)) {
+      const saved = localStorage.getItem('ng-lens-learn-mode');
+      return saved !== null ? saved === 'true' : true;
+    }
+    return true;
+  }
+
+  private getInitialHistory(): string[] {
+    if (isPlatformBrowser(this.platformId)) {
+      const saved = localStorage.getItem('ng-lens-history');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return [];
+        }
+      }
+    }
+    return [];
   }
 }

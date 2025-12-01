@@ -3,7 +3,6 @@ import {
   Component,
   input,
   output,
-  signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,22 +28,21 @@ interface AngularVersion {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <header class="app-header" [class.collapsed]="isCollapsed()" role="banner">
+    <header class="app-header" role="banner">
       <div class="header-content">
         <div class="logo-section">
-          <h1 class="logo">
-            <span class="logo-icon" aria-hidden="true">🔍</span>
-            <span class="logo-text">ng-lens</span>
-          </h1>
-          @if (!isCollapsed()) {
+          <div class="logo">
+            <div class="logo-icon-wrapper">
+              <mat-icon class="logo-icon">auto_awesome</mat-icon>
+            </div>
+            <span class="logo-text">NgLens</span>
+          </div>
           <span class="tagline" role="doc-subtitle"
-            >AI-powered Angular documentation assistant</span
+            >Chat with Angular Docs, powered by Gemini</span
           >
-          }
         </div>
 
         <div class="header-actions">
-          @if (!isCollapsed()) {
           <mat-form-field appearance="outline" class="version-selector">
             <mat-label>Angular Version</mat-label>
             <mat-select
@@ -64,18 +62,18 @@ interface AngularVersion {
 
           <!-- Font Size Controls -->
           <div class="font-controls">
-            <button 
-              mat-icon-button 
-              (click)="decreaseFontSize()" 
+            <button
+              mat-icon-button
+              (click)="decreaseFontSize()"
               [disabled]="fontSize() <= 12"
               matTooltip="Decrease font size"
             >
               <mat-icon>text_decrease</mat-icon>
             </button>
             <span class="font-size-label">{{ fontSize() }}px</span>
-            <button 
-              mat-icon-button 
-              (click)="increaseFontSize()" 
+            <button
+              mat-icon-button
+              (click)="increaseFontSize()"
               [disabled]="fontSize() >= 24"
               matTooltip="Increase font size"
             >
@@ -84,8 +82,8 @@ interface AngularVersion {
           </div>
 
           <!-- Theme Toggle -->
-          <button 
-            mat-icon-button 
+          <button
+            mat-icon-button
             [matMenuTriggerFor]="themeMenu"
             matTooltip="Change theme"
           >
@@ -105,19 +103,6 @@ interface AngularVersion {
               <span>System</span>
             </button>
           </mat-menu>
-          }
-
-          <button
-            mat-icon-button
-            (click)="toggleCollapse()"
-            [attr.aria-label]="
-              isCollapsed() ? 'Expand header' : 'Collapse header'
-            "
-          >
-            <mat-icon>{{
-              isCollapsed() ? 'expand_more' : 'expand_less'
-            }}</mat-icon>
-          </button>
         </div>
       </div>
     </header>
@@ -133,18 +118,6 @@ interface AngularVersion {
         top: 0;
         z-index: 100;
         transition: all 0.3s ease;
-
-        &.collapsed {
-          padding: 0.5rem 2rem;
-
-          .logo {
-            font-size: 1.25rem;
-
-            .logo-icon {
-              font-size: 1.5rem;
-            }
-          }
-        }
 
         .header-content {
           max-width: 1400px;
@@ -163,23 +136,40 @@ interface AngularVersion {
           .logo {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--mat-sys-primary);
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
             margin: 0;
-            transition: all 0.3s ease;
+            cursor: default;
+            user-select: none;
 
-            .logo-icon {
-              font-size: 2rem;
-              transition: all 0.3s ease;
+            .logo-icon-wrapper {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 36px;
+              height: 36px;
+              background: linear-gradient(135deg, #dd0031 0%, #c3002f 100%);
+              border-radius: 10px;
+              box-shadow: 0 4px 12px rgba(221, 0, 49, 0.25);
+              transition: transform 0.3s ease;
+
+              .logo-icon {
+                color: white;
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+              }
+            }
+
+            &:hover .logo-icon-wrapper {
+              transform: rotate(-10deg) scale(1.05);
             }
 
             .logo-text {
-              background: linear-gradient(135deg, #dd0031 0%, #c3002f 100%);
-              -webkit-background-clip: text;
-              -webkit-text-fill-color: transparent;
-              background-clip: text;
+              color: var(--mat-sys-on-surface);
+              /* Removed gradient text for better visibility/compatibility */
             }
           }
 
@@ -203,7 +193,7 @@ interface AngularVersion {
         .version-selector {
           min-width: 160px;
           margin: 0;
-          
+
           /* Compact form field */
           ::ng-deep .mat-mdc-form-field-subscript-wrapper {
             display: none;
@@ -237,7 +227,7 @@ interface AngularVersion {
             width: 32px;
             height: 32px;
             padding: 0;
-            
+
             mat-icon {
               font-size: 18px;
               width: 18px;
@@ -265,7 +255,9 @@ interface AngularVersion {
           .header-actions {
             width: auto;
 
-            .version-selector, .font-controls, .divider {
+            .version-selector,
+            .font-controls,
+            .divider {
               display: none; /* Hide extra controls on mobile for now */
             }
           }
@@ -285,12 +277,6 @@ export class HeaderComponent {
   theme = input.required<'light' | 'dark' | 'system'>();
   themeChange = output<'light' | 'dark' | 'system'>();
 
-  isCollapsed = signal(false);
-
-  toggleCollapse() {
-    this.isCollapsed.update((v) => !v);
-  }
-
   increaseFontSize() {
     this.fontSizeChange.emit(this.fontSize() + 1);
   }
@@ -301,9 +287,12 @@ export class HeaderComponent {
 
   themeIcon() {
     switch (this.theme()) {
-      case 'light': return 'light_mode';
-      case 'dark': return 'dark_mode';
-      case 'system': return 'brightness_auto';
+      case 'light':
+        return 'light_mode';
+      case 'dark':
+        return 'dark_mode';
+      case 'system':
+        return 'brightness_auto';
     }
   }
 }

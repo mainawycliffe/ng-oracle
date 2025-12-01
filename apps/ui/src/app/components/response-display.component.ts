@@ -109,11 +109,10 @@ interface Interaction {
                 clipboard
               ></markdown>
               } @else if (isLoading() && $last) {
-              <div class="thinking-indicator">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <span>Thinking...</span>
+              <div class="thinking-skeleton">
+                <div class="skeleton-line short"></div>
+                <div class="skeleton-line medium"></div>
+                <div class="skeleton-line long"></div>
               </div>
               } } @else {
               <div class="blocks-container">
@@ -133,21 +132,17 @@ interface Interaction {
                     <span class="language-badge">{{ block.language }}</span>
                   </div>
                   }
-                  <markdown
-                    [data]="getCodeBlock(block)"
-                    clipboard
-                  ></markdown>
+                  <markdown [data]="getCodeBlock(block)" clipboard></markdown>
                 </div>
                 } }
               </div>
               }
             </div>
             } @else if (isLoading() && $last) {
-            <div class="thinking-indicator">
-              <div class="dot"></div>
-              <div class="dot"></div>
-              <div class="dot"></div>
-              <span>Thinking...</span>
+            <div class="thinking-skeleton">
+              <div class="skeleton-line short"></div>
+              <div class="skeleton-line medium"></div>
+              <div class="skeleton-line long"></div>
             </div>
             }
           </div>
@@ -156,7 +151,7 @@ interface Interaction {
       } @if (interactions().length === 0) {
       <div class="empty-notebook">
         <div class="notebook-intro">
-          <h1>ng-lens Notebook</h1>
+          <h1>NgLens</h1>
           <p>Interactive Angular Learning Environment</p>
         </div>
 
@@ -279,7 +274,8 @@ interface Interaction {
         }
 
         .input-source {
-          font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+          font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
+            Liberation Mono, monospace;
           font-size: 14px;
           color: var(--mat-sys-on-surface);
           white-space: pre-wrap;
@@ -305,7 +301,9 @@ interface Interaction {
         }
 
         .output-result {
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+            'Noto Sans', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+            'Segoe UI Emoji';
           font-size: 16px;
           line-height: 1.6;
           color: var(--mat-sys-on-surface);
@@ -339,7 +337,8 @@ interface Interaction {
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
-                font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+                font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo,
+                  Consolas, Liberation Mono, monospace;
                 font-size: 13px;
                 color: var(--mat-sys-on-surface);
                 font-weight: 600;
@@ -365,7 +364,8 @@ interface Interaction {
               border-radius: 0 !important;
               background: transparent !important;
               padding: 16px !important;
-              font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace !important;
+              font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo,
+                Consolas, Liberation Mono, monospace !important;
               font-size: 14px !important;
               line-height: 1.5 !important;
             }
@@ -373,39 +373,43 @@ interface Interaction {
         }
       }
 
-      .thinking-indicator {
+      .thinking-skeleton {
         display: flex;
-        align-items: center;
-        gap: 8px;
+        flex-direction: column;
+        gap: 0.5rem;
         padding: 1rem 0;
-        color: var(--mat-sys-secondary);
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.9rem;
+        max-width: 300px;
 
-        .dot {
-          width: 8px;
-          height: 8px;
-          background-color: var(--mat-sys-secondary);
-          border-radius: 50%;
-          animation: pulse 1.4s infinite ease-in-out both;
+        .skeleton-line {
+          height: 12px;
+          border-radius: 6px;
+          background: linear-gradient(
+            90deg,
+            var(--mat-sys-surface-container-high) 25%,
+            var(--mat-sys-surface-container-highest) 50%,
+            var(--mat-sys-surface-container-high) 75%
+          );
+          background-size: 200% 100%;
+          animation: shimmer 1.5s infinite linear;
 
-          &:nth-child(1) {
-            animation-delay: -0.32s;
+          &.short {
+            width: 60%;
           }
-          &:nth-child(2) {
-            animation-delay: -0.16s;
+          &.medium {
+            width: 80%;
+          }
+          &.long {
+            width: 100%;
           }
         }
       }
 
-      @keyframes pulse {
-        0%,
-        80%,
-        100% {
-          transform: scale(0);
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
         }
-        40% {
-          transform: scale(1);
+        100% {
+          background-position: -200% 0;
         }
       }
 

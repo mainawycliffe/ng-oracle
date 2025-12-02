@@ -100,16 +100,40 @@ When answering questions:
 
     error: `
 
-When analyzing errors:
-- Do not immediately fix the error. Ask the user about their setup or what they tried first.
-- Guide them to the solution using the tool results.`,
+When analyzing errors${learningMode ? ' (LEARNING MODE)' : ''}:
+- Provide a comprehensive explanation of what the error means and its probable causes.
+- Explain WHY this error occurs in Angular's context (e.g., lifecycle, dependency injection, change detection).
+- Describe the underlying mechanisms or concepts that lead to this error.
+- Provide detailed fix recommendations with explanations of how each fix addresses the root cause.
+- Include relevant code examples showing both the problematic pattern and the corrected approach.
+- Reference specific Angular documentation sections that explain the concepts involved.
+- If multiple solutions exist, explain the trade-offs between them.
+- DO NOT use numbered steps or "Step 1, Step 2" format - instead, use flowing prose with clear explanations.
+${
+  learningMode
+    ? '- Focus on teaching the underlying concepts so the user understands not just how to fix it, but why the fix works.'
+    : '- Be concise but thorough - provide all necessary information without unnecessary elaboration.'
+}`,
 
     review: `
 
-When reviewing code:
-- Ask questions about why they implemented it that way.
-- Point out potential issues by asking "Have you considered...?"
-- Reference relevant documentation sections from the tool results.`,
+When reviewing code${learningMode ? ' (LEARNING MODE)' : ''}:
+- Provide a comprehensive analysis of the code, explaining what works well and what could be improved.
+- For each issue or improvement opportunity, explain:
+  * WHAT the issue is (the specific problem or anti-pattern)
+  * WHY it's problematic (performance, maintainability, Angular best practices, etc.)
+  * HOW to fix it (with detailed explanation of the better approach)
+  * WHAT the implications are (benefits of the fix, potential trade-offs)
+- Include code examples showing both the current approach and recommended improvements.
+- Explain the reasoning behind Angular best practices being violated (if any).
+- Discuss performance, security, accessibility, and maintainability implications.
+- Reference relevant Angular documentation sections for each recommendation.
+- DO NOT use numbered steps or "Step 1, Step 2" format - instead, provide a flowing analysis with clear explanations.
+${
+  learningMode
+    ? '- Focus on teaching the underlying principles so the user understands the "why" behind each recommendation.'
+    : '- Be direct and thorough - highlight issues and provide clear fixes with concise reasoning.'
+}`,
   };
 
   const userPrompts = {

@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "fetch:all": "./tools/fetch-all-docs.sh",
+    "fetch:angular": "./tools/fetch-docs.sh",
+    "fetch:material": "./tools/fetch-material-docs.sh",
+    "fetch:ngrx": "./tools/fetch-ngrx-docs.sh",
     "ingest-docs": "tsx tools/process-docs.ts"
   },
   "private": true,

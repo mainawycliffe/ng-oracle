@@ -1,0 +1,8 @@
+load("//tools:defaults.bzl", "markdown_to_html")
+
+package(default_visibility = ["//visibility:public"])
+
+markdown_to_html(
+    name = "guides",
+    srcs = glob(["**/*.md"]),
+)

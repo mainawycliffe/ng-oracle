@@ -18,7 +18,6 @@ export const EXAMPLE_PROMPTS: ExamplePrompt[] = [
     category: 'Best Practices',
     icon: 'verified',
     prompts: [
-      'Show me how to structure a scalable Nx monorepo.',
       'What is the recommended way to handle HTTP errors?',
       'How do I implement lazy loading with standalone components?',
     ],

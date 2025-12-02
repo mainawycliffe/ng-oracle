@@ -23,6 +23,24 @@ export const EXAMPLE_PROMPTS: ExamplePrompt[] = [
     ],
   },
   {
+    category: 'Angular Material',
+    icon: 'palette',
+    prompts: [
+      'How do I set up a custom theme with Material 3?',
+      'Show me how to use MatDialog with standalone components.',
+      'What are the best practices for responsive layouts with Material?',
+    ],
+  },
+  {
+    category: 'NgRX State',
+    icon: 'data_object',
+    prompts: [
+      'How do I use SignalStore in NgRX?',
+      'Show me how to implement Effects for API calls.',
+      'What is the difference between Store and ComponentStore?',
+    ],
+  },
+  {
     category: 'Debugging',
     icon: 'bug_report',
     prompts: [

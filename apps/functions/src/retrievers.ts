@@ -12,3 +12,23 @@ export const angularDocsRetriever = defineFirestoreRetriever(ai, {
   embedder: vertexAI.embedder('text-embedding-004'),
   distanceMeasure: 'COSINE',
 });
+
+export const materialDocsRetriever = defineFirestoreRetriever(ai, {
+  name: 'materialDocsRetriever',
+  firestore: db,
+  collection: 'material-docs',
+  contentField: 'content',
+  vectorField: 'embedding',
+  embedder: vertexAI.embedder('text-embedding-004'),
+  distanceMeasure: 'COSINE',
+});
+
+export const ngrxDocsRetriever = defineFirestoreRetriever(ai, {
+  name: 'ngrxDocsRetriever',
+  firestore: db,
+  collection: 'ngrx-docs',
+  contentField: 'content',
+  vectorField: 'embedding',
+  embedder: vertexAI.embedder('text-embedding-004'),
+  distanceMeasure: 'COSINE',
+});

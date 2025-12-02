@@ -5,7 +5,7 @@ import {
   oracleOutputSchema,
   oracleResponseSchema,
 } from './schemas';
-import { searchAngularDocs } from './tools';
+import { searchAngularDocs, searchMaterialDocs, searchNgrxDocs } from './tools';
 
 export const theOracleFlow = ai.defineFlow(
   {
@@ -20,7 +20,7 @@ export const theOracleFlow = ai.defineFlow(
       mode,
       query,
       angularVersion,
-      learningMode
+      learningMode,
     );
 
     const messages = (history || []).map((m) => ({
@@ -49,7 +49,7 @@ export const theOracleFlow = ai.defineFlow(
     const response = await ai.generate({
       system,
       messages,
-      tools: [searchAngularDocs],
+      tools: [searchAngularDocs, searchMaterialDocs, searchNgrxDocs],
       output: { schema: oracleResponseSchema },
       config: {
         temperature: 0.5,
@@ -59,5 +59,5 @@ export const theOracleFlow = ai.defineFlow(
     return {
       response: response.output,
     };
-  }
+  },
 );

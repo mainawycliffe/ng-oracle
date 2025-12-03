@@ -35,7 +35,7 @@ export const searchAngularDocs = ai.defineTool(
         where: {
           version: formattedVersion,
         },
-        limit: 5,
+        limit: 20,
       },
     });
     return {
@@ -74,7 +74,7 @@ export const searchMaterialDocs = ai.defineTool(
         where: {
           version: formattedVersion,
         },
-        limit: 5,
+        limit: 20,
       },
     });
     return {
@@ -113,7 +113,7 @@ export const searchNgrxDocs = ai.defineTool(
         where: {
           version: formattedVersion,
         },
-        limit: 5,
+        limit: 20,
       },
     });
     return {
